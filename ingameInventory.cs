@@ -256,7 +256,7 @@ public class ingameInventory : MonoBehaviour
     private float RatioPerWorker() => workerLevel < workerRatios.Length ? workerRatios[workerLevel] : 1f;
 
     //현재 일꾼에 비례해 증가하는 골드 생산속도 증가 비용
-    private int CostPerWorker() => workerLevel < workerCosts.Length ? workerCosts[workerLevel] : 0;
+    private int CostPerWorker() => workerLevel < workerCosts.Length ? workerCosts[workerLevel] : 10000;
 
     private void changeWorkerText()
     {
