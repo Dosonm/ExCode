@@ -30,8 +30,6 @@ public class GameManager : MonoBehaviour
 
 
     [Header("Soldier UI")]
-    
-    [FormerlySerializedAs("UI_unitSlots")]
     public UI_Slot[] UI_soldierSlots;
     public List<float> soldierSpawnCoolTime = new List<float>();
     public List<float> soldierSpawnCoolTimer = new List<float>();
