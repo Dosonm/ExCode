@@ -13,18 +13,18 @@ public class ingameInventory : MonoBehaviour
     public AugmentData augmentData;
 
     [Header("Resources & Data")]
-    public float gold;
-    public float defaultMaxGold;
+    public float gold { get; private set; }
+    public float defaultMaxGold { get; private set; }
+    public int soul { get; private set; }
+    public int defaultMaxSoul { get; private set; }
     public float maxGold;
-    public int soul;
-    public int defaultMaxSoul;
     public int maxSoul;
     
     public float goldIncreaseInterval = 0.1f;
     public float goldPerInterval = 1; 
     private float augmentGoldIncrease = 1;
     
-    public int DefaultMaxPopulation;
+    public int DefaultMaxPopulation { get; private set; }
     public int MaxPopulation;   
 
 
@@ -277,25 +277,19 @@ public class ingameInventory : MonoBehaviour
         UpdateSoulUI();
     }
 
-    public void addMaxSoul(int _int)
-    {
-        maxSoul += _int;
-        UpdateSoulUI();
-    }
-
     public void changeAugmentGold(float i)
     {
         augmentGoldIncrease += augmentGoldIncrease * 0.01f * i * GoldTowerEffect(); 
     }
 
-    private void SpendGold(int amount)
+    public void SpendGold(int amount)
     {
         if (augmentData.isForbiddenDeal) return;
         gold -= amount;
         UpdateGoldUI();
     }
 
-    private void SpendHeroCost(int amount)
+    public void SpendHeroCost(int amount)
     {
         if (augmentData.isForbiddenDeal) return;
         soul -= amount;
@@ -376,28 +370,28 @@ public class ingameInventory : MonoBehaviour
     public void getBossReward(BossRank _bossRank)
     {
         if (stageInfo.gameMode == GameMode.Dungeon) return;
-        
+
         switch (_bossRank)
         {
-            case BossRank.A:
-                AddGold(200);
-                break;
-            case BossRank.Aplus:
-                AddSoul(1);
-                break;
-            case BossRank.S:
-                augmentCanvas.GetComponent<UIaugment>().changeNum(2, 1);
-                StartCoroutine(AugmentActive());
-                break;
-            case BossRank.SS:
-                AddSoul(2);
-                break;
-            case BossRank.SSS:
-                augmentCanvas.GetComponent<UIaugment>().changeNum(2, 2);
-                StartCoroutine(AugmentActive());
-                break;
+            case BossRank.A:    AddGold(200);               break;
+            case BossRank.Aplus: AddSoul(1);                break;
+            case BossRank.S:    ActivateAugment(2, 1);      break;
+            case BossRank.SS:   AddSoul(2);                 break;
+            case BossRank.SSS:  ActivateAugment(2, 2);      break;
         }
     }
+
+    private void ActivateAugment(int a, int b)
+    {
+        augmentCanvas.GetComponent<UIaugment>().changeNum(a, b);
+        StartCoroutine(AugmentActiveDelay());
+    }
+    IEnumerator AugmentActiveDelay()
+    {
+        yield return new WaitForSeconds(1f);
+        augmentCanvas.SetActive(true);
+    }
+
 
     public GameObject GetArrow(int _ballNum)
     {
@@ -426,12 +420,6 @@ public class ingameInventory : MonoBehaviour
     {
         GameObject tmp = Instantiate(soulTmpPrefab, DamageTextManager.instance.canvas.transform);
         tmp.transform.position = playerManager.instance.player.transform.position + new Vector3(1.5f, 2f, 0);
-    }
-
-    IEnumerator AugmentActive()
-    {
-        yield return new WaitForSeconds(1f);
-        augmentCanvas.SetActive(true);
     }
 
     private float GoldTowerEffect() => isGoldTowerEffect ? 1.2f : 1f;
